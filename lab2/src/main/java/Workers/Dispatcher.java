@@ -19,64 +19,71 @@ public class Dispatcher {
         return !controller.getCommandQueue().isEmpty();
     }
 
+    private String[] getParams(String[] arguments) {
+        String[] res = new String[arguments.length - 1];
+        System.arraycopy(arguments, 1, res, 0, arguments.length - 1);
+        return res;
+    }
     /**
      * <p>Commands:</p>
-     * <p>updatePerson(String id, String... params), deletePerson(String id), createPerson(Persons.Person person)</p>
-     * <p>In following form: command1;command2;...</p>
+     * <p>
+     * updatePerson(String id, String... params), <br>
+     * deletePerson(String id), <br>
+     * createPerson(Person person) in JSON format
+     * </p>
+     * <p>In following form: <br> command1; <br> command2; <br>...</p>
      **/
-    private void decodeCommands(Queue<String> queue) {                                                                  //Decode commands from file, add them to queue
-//        for(String s : queue) {
-//            System.out.println(queue.peek());
-//        }
-//        String[] splited;
-//        int index, lastIndex;
-//        StringBuilder builder = new StringBuilder();
-//        for(String fileCom : queue) {
-//            splited = fileCom.split(";");
-//            for(String com : splited) {
-//                if(com.contains("updatePerson(")) {
-//                    index = com.indexOf("updatePerson(");
-//                    lastIndex = com.indexOf(")", index);
-//                    builder.append(com, index + 14, lastIndex - 1);
-//                    String[] tempedString = builder.toString().split(",");
-//                    String t = tempedString.toString().replace(tempedString[0], "");
-//                    service.updatePerson(tempedString[0], t.split(","));
-//                    builder.delete(0, builder.length() - 1);
-//                }
-//                else if(com.contains("deletePerson(")) {
-//                    index = com.indexOf("deletePerson(");
-//                    lastIndex = com.indexOf(")", index);
-//                    builder.append(com, index + 14, lastIndex - 1);
-//                    service.deletePerson(builder.toString());
-//                    builder.delete(0, builder.length() - 1);
-//                }
-//                else if(com.contains("createPerson(")) {
-//
-//                    index = com.indexOf("createPerson(");
-//                    lastIndex = com.indexOf(")", index);
-//                    builder.append(com, index + 14, lastIndex - 1);
-//                    service.createPerson(Person.create(builder.toString()));
-//                    builder.delete(0, builder.length() - 1);
-//                }
-//            }
-//        }
+    private void decodeCommands(Queue<String> queue) {
+        System.out.println("Queue has " + controller.getCommandQueue().size() + "  elements");
+        String substring;
+        String[] arguments;
+        int startIndex;
+        int endIndex;
         for(String element : queue) {
-
+            System.out.println(element);
+            String[] splited = element.split(";\n");
+            for (String s : splited) {
+                if (s.contains("updatePerson(")) {
+                    startIndex = s.indexOf("updatePerson(");
+                    endIndex = s.indexOf(")");
+                    substring = s.substring(startIndex + 13, endIndex);
+                    arguments = substring.split(", ");
+                    service.updatePerson(arguments[0], getParams(arguments));
+                } else if (s.contains("deletePerson(")) {
+                    startIndex = s.indexOf("deletePerson(");
+                    endIndex = s.indexOf(")");
+                    substring = s.substring(startIndex + 13, endIndex);
+                    service.deletePerson(substring);
+                } else if (s.contains("createPerson(")) {
+                    startIndex = s.indexOf("createPerson(");
+                    endIndex = s.indexOf(")");
+                    substring = s.substring(startIndex + 13, endIndex);
+                    try {
+                        service.createPerson(Person.rawCreate(substring));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else {
+                    System.out.println("Unknown command " + s);
+                }
+            }
         }
         controller.flushQueue();
     }
 
     public void doWork() {
+        controller.doWork();
         System.out.println("Working " + Thread.currentThread().getName());                                              //Timer works in other thread
-        Timer timer = new Timer();
-        TimerTask checkTask = new TimerTask() {
+        Timer timer = new Timer("Dispatcher timer");
+        TimerTask task = new TimerTask() {
+            @Override
             public void run() {
-                if(check()) {
+                if (check()) {
                     decodeCommands(controller.getCommandQueue());
                 }
             }
         };
-        timer.schedule(checkTask, delay);
+        timer.schedule(task, 0, delay);
     }
-
 }

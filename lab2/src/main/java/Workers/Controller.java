@@ -21,9 +21,8 @@ public class Controller {
         try {
             Files.createDirectory(errorPath);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Temped dir already exists");
         }
-        doWork();
     }
 
     Queue<String> getCommandQueue() {
@@ -45,6 +44,7 @@ public class Controller {
 
     private void check() {                                                                                              //Check directory for files
         System.out.println("Working " + Thread.currentThread().getName());
+        System.out.println("Checking");
         File dir = new File(this.path);
         String fileLines;
         for (File file : dir.listFiles()) {
@@ -64,16 +64,18 @@ public class Controller {
                 System.out.println("Exception at file " + file.getName());
             }
         }
+        System.out.println("Stop checking");
     }
 
-    private void doWork() {
+    void doWork() {
         System.out.println("Working " + Thread.currentThread().getName());                                              //Timer works in other thread
-        Timer timer = new Timer();
-        TimerTask checkTask = new TimerTask() {
+        Timer timer = new Timer("Controller timer");
+        TimerTask task = new TimerTask() {
+            @Override
             public void run() {
                 check();
             }
         };
-        timer.schedule(checkTask, delay);
+        timer.schedule(task, 0, delay);
     }
 }

@@ -40,24 +40,34 @@ public abstract class Person {
         return this.toString().equals(person.toString());
     }
 
+    public static Person rawCreate(String rawData) throws Exception {
+        if(rawData.contains("hours")) {
+            return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(rawData, Teacher.class);
+        } else if (rawData.contains("map")) {
+            return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(rawData, Student.class);
+        }
+        return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(rawData, Person.class);
+    }
+
     public static Person create(String filename) {                                                                      //creates Persons.Person from text file
         File file = new File(filename);
         StringBuilder builder = new StringBuilder();
         if(!file.isFile()) return null;
-        try(FileReader reader = new FileReader(file))
-        {
+        try(FileReader reader = new FileReader(file)) {
             int c;
-            while((c = reader.read()) != -1) {
-                builder.append((char)c);
+            while ((c = reader.read()) != -1) {
+                builder.append((char) c);
             }
-            if(builder.toString().contains("hours")) {
-                return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(builder.toString(), Teacher.class);
-            } else if (builder.toString().contains("map")) {
-                return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(builder.toString(), Student.class);
-            }
-            return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(builder.toString(), Person.class);
+//            if(builder.toString().contains("hours")) {
+//                return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(builder.toString(), Teacher.class);
+//            } else if (builder.toString().contains("map")) {
+//                return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(builder.toString(), Student.class);
+//            }
+//            return new ObjectMapper().configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true).readValue(builder.toString(), Person.class);
+              return rawCreate(builder.toString());
         }
         catch(Exception e) {
+            System.out.println("Incorrect data");
             throw new RuntimeException(e);
         }
     }
