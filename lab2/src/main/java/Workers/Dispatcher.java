@@ -1,5 +1,4 @@
 package Workers;
-import Persons.Person;
 import Services.PeopleService;
 import java.util.Queue;
 import java.util.Timer;
@@ -34,40 +33,9 @@ public class Dispatcher {
      * <p>In following form: <br> command1; <br> command2; <br>...</p>
      **/
     private void decodeCommands(Queue<String> queue) {
-        System.out.println("Queue has " + controller.getCommandQueue().size() + "  elements");
-        String substring;
-        String[] arguments;
-        int startIndex;
-        int endIndex;
-        for(String element : queue) {
-            System.out.println(element);
-            String[] splited = element.split(";\n");
-            for (String s : splited) {
-                if (s.contains("updatePerson(")) {
-                    startIndex = s.indexOf("updatePerson(");
-                    endIndex = s.indexOf(")");
-                    substring = s.substring(startIndex + 13, endIndex);
-                    arguments = substring.split(", ");
-                    service.updatePerson(arguments[0], getParams(arguments));
-                } else if (s.contains("deletePerson(")) {
-                    startIndex = s.indexOf("deletePerson(");
-                    endIndex = s.indexOf(")");
-                    substring = s.substring(startIndex + 13, endIndex);
-                    service.deletePerson(substring);
-                } else if (s.contains("createPerson(")) {
-                    startIndex = s.indexOf("createPerson(");
-                    endIndex = s.indexOf(")");
-                    substring = s.substring(startIndex + 13, endIndex);
-                    try {
-                        service.createPerson(Person.rawCreate(substring));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                else {
-                    System.out.println("Unknown command " + s);
-                }
-            }
+        System.out.println("Working decoder");
+        for(String commands : queue) {
+            
         }
         controller.flushQueue();
     }
@@ -81,9 +49,24 @@ public class Dispatcher {
             public void run() {
                 if (check()) {
                     decodeCommands(controller.getCommandQueue());
+                    printInfo();
                 }
             }
         };
         timer.schedule(task, 0, delay);
+    }
+
+    public PeopleService getService() {
+        return this.service;
+    }
+    public Controller getController() {
+        return this.controller;
+    }
+
+    private void printInfo() {
+        String[] Ids = service.getIds();
+        for(String id : Ids) {
+            System.out.println("id = " + id);
+        }
     }
 }

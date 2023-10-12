@@ -3,13 +3,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Student extends Person {
-    private final Map<Subjects, Double> map;
+    private Map<Subjects, Double> map;
 
     public Student(String name, String surName, String secondName, int birthYear, String telephoneNumber, Map<Subjects, Double> map) {
         super(name, surName, secondName, birthYear, telephoneNumber);
         this.map = new HashMap<>();
         this.map.putAll(map);
     }
+
+//    public Student() {
+//        super();
+//        this.map = new HashMap<>();
+//    }
 
     public Map<Subjects, Double> getMap() {
         Map<Subjects, Double> copyMap = new HashMap<>();
@@ -21,4 +26,10 @@ public class Student extends Person {
         return copyMap;
     }
 
+    public void setMap(HashMap<Subjects, Double> newMap) {
+        this.map.clear();
+        for(Subjects subject: newMap.keySet()) {
+            this.map.put(subject, newMap.get(subject));
+        }
+    }
 }

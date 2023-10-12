@@ -1,5 +1,4 @@
 package Persons;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,11 +7,11 @@ import java.io.*;
 import java.util.UUID;
 
 public abstract class Person {
-    private final String name;
-    private final String surName;
-    private final String secondName;
-    private final int birthYear;
-    private final String telephoneNumber;
+    private String name;
+    private String surName;
+    private String secondName;
+    private int birthYear;
+    private String telephoneNumber;
     private final String id;
 
     public Person(String name, String surName, String secondName, int birthYear, String telephoneNumber) {
@@ -21,6 +20,16 @@ public abstract class Person {
         this.secondName = secondName;
         this.birthYear = birthYear;
         this.telephoneNumber = telephoneNumber;
+        UUID uuid = UUID.randomUUID();
+        this.id = uuid.toString();
+    }
+
+    private Person() {
+        name = "";
+        surName = "";
+        secondName = "";
+        birthYear = 0;
+        telephoneNumber = "";
         UUID uuid = UUID.randomUUID();
         this.id = uuid.toString();
     }
@@ -74,7 +83,7 @@ public abstract class Person {
 
     public int write(String directory) {                                                                                //Creates person file in directory
         File file = new File(directory + "\\" + this.name + this.surName + this.secondName + ".txt");
-        if(file.length() != 0) {                //non-empty file
+        if(file.length() != 0) {                                                                                        //non-empty file
             return 0;
         }
         else {
@@ -94,23 +103,42 @@ public abstract class Person {
         return name;
     }
 
+    public void setName(String newName) {
+        this.name = newName;
+    }
+
     public String getSurName() {
         return surName;
+    }
+
+    public void setSurName(String newSurName) {
+        this.surName = newSurName;
     }
 
     public String getSecondName() {
         return secondName;
     }
 
+    public void setSecondName(String newSecondName) {
+        this.secondName = newSecondName;
+    }
+
     public int getBirthYear() {
         return birthYear;
+    }
+
+    public void setBirthYear(int newBirthYear) {
+        this.birthYear = newBirthYear;
     }
 
     public String getTelephoneNumber() {
        return telephoneNumber;
     }
 
-    @JsonIgnore
+    public void setTelephoneNumber(String newNumber) {
+        this.telephoneNumber = newNumber;
+    }
+
     public String getId() {
         return id;
     }

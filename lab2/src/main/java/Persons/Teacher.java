@@ -2,13 +2,19 @@ package Persons;
 
 public class Teacher extends Person {
     private final Subjects subject;
-    private final int[] hours;
+    private int[] hours;
 
     public Teacher(String name, String surName, String secondName, int birthYear, String telephoneNumber, Subjects subject, int[] hours) {
         super(name, surName, secondName, birthYear, telephoneNumber);
         this.subject = subject;
         this.hours = hours;
     }
+
+//    public Teacher() {
+//        super();
+//        subject = Subjects.NODATA;
+//        hours = new int[]{};
+//    }
 
     public Subjects getSubject() {
         return subject;
@@ -20,4 +26,7 @@ public class Teacher extends Person {
         return copyHours;
     }
 
+    public void setHours(int[] newHours) {
+        this.hours = newHours;
+    }
 }

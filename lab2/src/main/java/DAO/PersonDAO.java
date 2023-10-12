@@ -58,4 +58,14 @@ public class PersonDAO implements DaoInterface<Person> {
         return null;
     }
 
+    @Override
+    public String[] getIds() {
+        String[] res = new String[personList.size()];
+        int i = 0;
+        for(Person person: personList) {
+            res[i] = person.getId();
+            i++;
+        }
+        return res;
+    }
 }

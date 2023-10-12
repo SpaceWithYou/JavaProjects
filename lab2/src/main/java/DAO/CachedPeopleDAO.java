@@ -38,7 +38,7 @@ public class CachedPeopleDAO implements DaoInterface<Person> {
                 System.out.println("Exception on file " + file.getName());
             }
         }
-        personMap.remove(person);
+        personMap.remove(person.getId());
     }
 
     @Override
@@ -52,5 +52,16 @@ public class CachedPeopleDAO implements DaoInterface<Person> {
     @Override
     public Person getById(String id) {
         return personMap.get(id);
+    }
+
+    @Override
+    public String[] getIds() {
+        String[] res = new String[personMap.size()];
+        int i = 0;
+        for(Person person : personMap.values()) {
+            res[i] = person.getId();
+            i++;
+        }
+        return res;
     }
 }

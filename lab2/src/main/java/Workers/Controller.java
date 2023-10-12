@@ -35,7 +35,7 @@ public class Controller {
 
     private void makeError(File file) {
         try {
-            Path path1 = Path.of(this.path + "errors" + file.getName());
+            Path path1 = Path.of(this.path + "\\errors\\" + file.getName());
             Files.copy(Path.of(file.getAbsolutePath()), path1, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             System.out.println("Exception");
@@ -55,13 +55,17 @@ public class Controller {
                 fileLines = Files.readAllLines(Path.of(file.getAbsolutePath())).toString();                             //Is control file
                 if (fileLines.contains("updatePerson") || fileLines.contains("deletePerson") || fileLines.contains("createPerson")) {
                     commandQueue.add(fileLines);
-                    file.delete();
                     System.out.println(file.getName());
                 } else {
+                    if(fileLines.contains("name")) {
+                        continue;
+                    }
                     makeError(file);
                 }
+                file.delete();
             } catch (Exception e) {
                 System.out.println("Exception at file " + file.getName());
+                makeError(file);
             }
         }
         System.out.println("Stop checking");
@@ -78,4 +82,5 @@ public class Controller {
         };
         timer.schedule(task, 0, delay);
     }
+
 }

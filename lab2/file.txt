@@ -1,0 +1,12 @@
+createPerson({
+  "name" : "AnotherName",
+  "surName" : "surname",
+  "secondName" : "secondname",
+  "birthYear" : 100,
+  "telephoneNumber" : "9999999999999",
+  "map" : {
+    "MATH" : 1.0,
+    "PHYSICS" : 3.0,
+    "PROGRAMMING" : 2.0
+  }
+});
