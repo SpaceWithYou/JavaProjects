@@ -1,8 +1,10 @@
 package Workers;
+import Persons.Person;
 import Services.PeopleService;
-import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.*;
 
 public class Dispatcher {
     private static final long delay = 1000L;
@@ -18,24 +20,50 @@ public class Dispatcher {
         return !controller.getCommandQueue().isEmpty();
     }
 
-    private String[] getParams(String[] arguments) {
-        String[] res = new String[arguments.length - 1];
-        System.arraycopy(arguments, 1, res, 0, arguments.length - 1);
-        return res;
-    }
     /**
      * <p>Commands:</p>
      * <p>
-     * updatePerson(String id, String... params), <br>
-     * deletePerson(String id), <br>
-     * createPerson(Person person) in JSON format
+     * update(String id, String... params), HashMap in JSON format<br>
+     * delete(String id), <br>
+     * create(Person person) in JSON format
      * </p>
      * <p>In following form: <br> command1; <br> command2; <br>...</p>
      **/
     private void decodeCommands(Queue<String> queue) {
         System.out.println("Working decoder");
-        for(String commands : queue) {
-            
+        int index;
+        try {
+            for(String commands : queue) {
+                for(String line: commands.split(";\n")) {
+                    if(line.contains("update(")) {
+                        index = line.indexOf("update(");
+                        int index2 = line.indexOf(",");
+                        String id = line.substring(index + 6, index2);
+                        String substring = line.substring(index2 + 1, line.length() - 1);
+                        ObjectMapper mapper = new ObjectMapper();
+                        TypeReference<HashMap<String, String>> typeRef
+                                = new TypeReference<HashMap<String, String>>() {};
+                        HashMap<String, String> map = mapper.readValue(substring, typeRef);
+                        service.updatePerson(id, map);
+                    }
+                    else if(line.contains("create(")) {
+                        index = line.indexOf("create(");
+                        String substring = line.substring(index + 6, line.length() - 1);
+                        Person person = Person.rawCreate(substring);
+                    }
+                    else if(line.contains("delete(")) {
+                        index = line.indexOf("create(");
+                        String substring = line.substring(index + 6, line.length() - 1);
+                        service.deletePerson(substring);
+                    }
+                    else {
+                        System.out.println("Unknown command: " + line);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error ");
+            e.printStackTrace();
         }
         controller.flushQueue();
     }
