@@ -27,17 +27,18 @@ public class CachedPeopleDAO implements DaoInterface<Person> {
 
     @Override
     public void delete(Person person) {
-        File dir = new File(path);
-        for (File file : dir.listFiles()) {                                       //Read files and compare them
-            try {
-                if (Person.create(file.getAbsolutePath()).equals(person)) {
-                    file.delete();
-                    break;
-                }
-            } catch (Exception e) {
-                System.out.println("Exception on file " + file.getName());
-            }
-        }
+        if(person == null) return;
+//        File dir = new File(path);
+//        for (File file : dir.listFiles()) {                                       //Read files and compare them
+//            try {
+//                if (Person.create(file.getAbsolutePath()).equals(person)) {
+//                    file.delete();
+//                    break;
+//                }
+//            } catch (Exception e) {
+//                System.out.println("Exception on file " + file.getName());
+//            }
+//        }
         personMap.remove(person.getId());
     }
 

@@ -43,8 +43,6 @@ public class Controller {
     }
 
     private void check() {                                                                                              //Check directory for files
-        System.out.println("Working " + Thread.currentThread().getName());
-        System.out.println("Checking");
         File dir = new File(this.path);
         String fileLines;
         for (File file : dir.listFiles()) {
@@ -56,7 +54,6 @@ public class Controller {
                 fileLines = Files.readAllLines(Path.of(file.getAbsolutePath())).toString();                             //Is control file
                 if (fileLines.contains("update") || fileLines.contains("delete") || fileLines.contains("create")) {
                     commandQueue.add(fileLines);
-                    System.out.println(file.getName());
                 } else {
                     makeError(file);
                 }
@@ -66,11 +63,9 @@ public class Controller {
                 makeError(file);
             }
         }
-        System.out.println("Stop checking");
     }
 
-    void doWork() {
-        System.out.println("Working " + Thread.currentThread().getName());                                              //Timer works in other thread
+    void doWork() {         //Timer works in other thread
         Timer timer = new Timer("Controller timer");
         TimerTask task = new TimerTask() {
             @Override

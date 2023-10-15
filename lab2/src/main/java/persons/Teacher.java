@@ -1,7 +1,7 @@
 package persons;
 
 public class Teacher extends Person {
-    private final Subjects subject;
+    private Subjects subject;
     private int[] hours;
 
     public Teacher(String name, String surName, String secondName, int birthYear, String telephoneNumber, Subjects subject, int[] hours) {
@@ -28,5 +28,9 @@ public class Teacher extends Person {
 
     public void setHours(int[] newHours) {
         this.hours = newHours;
+    }
+
+    public void setSubject(Subjects newSubject) {
+        this.subject = newSubject;
     }
 }

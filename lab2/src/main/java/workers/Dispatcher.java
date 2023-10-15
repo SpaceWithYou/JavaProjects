@@ -29,18 +29,18 @@ public class Dispatcher {
      * <p>In following form: <br> command1; <br> command2; <br>...</p>
      **/
     private void decodeCommands(Queue<String> queue) {
-        System.out.println("Working decoder");
         int index;
+        String[] lines;
         try {
             for(String commands : queue) {
-                for(String line: commands.split(";\n")) {
+                lines = commands.split(";, ");
+                for(String line: lines) {
                     if(line.contains("update(")) {
                         index = line.indexOf("update(");
                         int index2 = line.indexOf(",");
                         String id = line.substring(index + 7, index2);
-                        String substring = line.substring(index2 + 1, line.length() - 2);
-                        System.out.println("ID = " + id);
-                        System.out.println("SubString = " + substring);
+                        String substring = line.substring(index2 + 1, line.length() - 1);
+                        substring = substring.replace(");", "");
                         ObjectMapper mapper = new ObjectMapper();
                         TypeReference<HashMap<String, String>> typeRef
                                 = new TypeReference<HashMap<String, String>>() {};
@@ -49,13 +49,14 @@ public class Dispatcher {
                     }
                     else if(line.contains("create(")) {
                         index = line.indexOf("create(");
-                        String substring = line.substring(index + 7, line.length() - 2);
-                        System.out.println("Substring = " + substring);
+                        String substring = line.substring(index + 7, line.length() - 1);
+                        substring = substring.replace(");", "");
                         service.createPerson(Person.rawCreate(substring));
                     }
                     else if(line.contains("delete(")) {
-                        index = line.indexOf("create(");
-                        String substring = line.substring(index + 7, line.length() - 2);
+                        index = line.indexOf("delete(");
+                        String substring = line.substring(index + 7, line.length() - 1);
+                        substring = substring.replace(");", "");
                         service.deletePerson(substring);
                     }
                     else {
@@ -71,8 +72,7 @@ public class Dispatcher {
     }
 
     public void doWork() {
-        controller.doWork();
-        System.out.println("Working " + Thread.currentThread().getName());                                              //Timer works in other thread
+        controller.doWork();         //Timer works in other thread
         Timer timer = new Timer("Dispatcher timer");
         TimerTask task = new TimerTask() {
             @Override
@@ -96,6 +96,7 @@ public class Dispatcher {
 
     private void printInfo() {
         String[] Ids = service.getIds();
+        System.out.println("Current IDs: ");
         for(String id : Ids) {
             System.out.println("id = " + id);
         }

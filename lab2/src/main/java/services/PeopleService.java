@@ -4,9 +4,6 @@ import persons.Person;
 import persons.Student;
 import persons.Subjects;
 import persons.Teacher;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 
 public class PeopleService {
@@ -17,15 +14,15 @@ public class PeopleService {
     }
 
     public void createPerson(Person person) {
+        System.out.println("creating...");
         peopleDAO.add(person);
     }
 
     private HashMap<Subjects, Double> parseMap(String stringMap) {
         HashMap<Subjects, Double> map = new HashMap<>();
-        stringMap.replace("{", "").replace("}", "").
-                replace(",", "").replace("", "\"").replace(" ", "").
-                replace("\r\n", "");
-        String[] splitString = stringMap.split(":");
+        stringMap = stringMap.replace("{", "").replace("}", "").
+                replace("\r\n", "").replace("\"", "");
+        String[] splitString = stringMap.split(",");
         String[] splitLine;
         try {
             for(String line: splitString) {
@@ -44,7 +41,7 @@ public class PeopleService {
     }
 
     private int[] parseHours(String stringArr) {
-        stringArr.replace("[", "").replace("]", "");
+        stringArr = stringArr.replace("[", "").replace("]", "");
         String[] splited = stringArr.split(", ");
         int[] res = new int[splited.length];
         try {
@@ -62,18 +59,19 @@ public class PeopleService {
      * changeMap keys: <br>
      * name, surname, secondname, birthyear, number <br>
      * Optional: hours [hour1, hour2, ...] string <br>
-     * or Hashmap of Subjects and Doubles JSON **/
+     * or Hashmap of Subjects and Doubles JSON <br>
+     * for teacher subject**/
     public Person updatePerson(String id, HashMap<String, String> changeMap) {
-        System.out.println("updating.....");
+        System.out.println("updating...");
         Person person = this.peopleDAO.getById(id);
         for(String value: changeMap.keySet()) {
             value.toLowerCase();
-            System.out.println("VALUE = " + value);
             switch (value) {
                 case "name" -> person.setName(changeMap.get(value));
                 case "surname" -> person.setSurName(changeMap.get(value));
                 case "secondname" -> person.setSecondName(changeMap.get(value));
                 case "birthyear" -> person.setBirthYear(Integer.parseInt(changeMap.get(value)));
+                case "number" -> person.setTelephoneNumber(changeMap.get(value));
                 case "map" -> {
                     if(person.toString().contains("hours")) {
                         continue;
@@ -88,13 +86,24 @@ public class PeopleService {
                     Teacher teacher = (Teacher) person;
                     teacher.setHours(parseHours(changeMap.get(value)));
                 }
-                default -> System.out.println("Unknown command");
+                case "subject" -> {
+                    if(person.toString().contains("map")) {
+                        continue;
+                    }
+                    Teacher teacher = (Teacher) person;
+                    if(changeMap.get(value).equals("NODATA")) teacher.setSubject(Subjects.NODATA);
+                    else if(changeMap.get(value).equals("MATH")) teacher.setSubject(Subjects.MATH);
+                    else if(changeMap.get(value).equals("PHYSICS")) teacher.setSubject(Subjects.PHYSICS);
+                    else if(changeMap.get(value).equals("PROGRAMMING")) teacher.setSubject(Subjects.PROGRAMMING);
+                }
+                default -> System.out.println("Unknown command " + value);
             }
         }
         return person;
     }
 
     public void deletePerson(String id) {
+        System.out.println("deleting...");
         peopleDAO.delete(peopleDAO.getById(id));
     }
 

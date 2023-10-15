@@ -16,7 +16,9 @@ public class DispatcherTest {
         Path path = Path.of(".\\temped_tests");
         try {
             //create working dir
-            Files.createDirectory(path);
+            if(!new File(path.toString()).exists()) {
+                Files.createDirectory(path);
+            }
             //create new Persons
             Teacher teacher = new Teacher("tName", "tSurname", "tSecondname", 100,
                     "+988888888", Subjects.NODATA, new int[] {8, 17});
@@ -45,7 +47,6 @@ public class DispatcherTest {
             Controller controller = new Controller(".\\temped_tests\\");
             Dispatcher dispatcher = new Dispatcher(".\\temped_tests\\", controller);
             ObjectMapper mapper = new ObjectMapper();
-            //mapper.enable(SerializationFeature.INDENT_OUTPUT);
             //Move test file's
             new File(".\\file1.txt").renameTo(new File(".\\temped_tests\\file1.txt"));
             new File(".\\file2.txt").renameTo(new File(".\\temped_tests\\file2.txt"));
@@ -68,11 +69,10 @@ public class DispatcherTest {
             change.put("birthyear", "1");
             change.put("number", "++++++++");
             change.put("map", mapper.writeValueAsString(marks));
+            change.put("hours", "[1, 5]");
             //update student
             String toWrite = "update(" + dispatcher.getService().getIds()[1] + ", " + mapper.writeValueAsString(change) + ");\n";
             Files.write(file2.toPath(), toWrite.getBytes());
-            change.remove("map");
-            change.put("hours", "[1, 5]");
             //update teacher
             file2 = new File(".\\file4.txt");
             toWrite = "update(" + dispatcher.getService().getIds()[0] + ", " + mapper.writeValueAsString(change) + ");\n";
@@ -99,10 +99,11 @@ public class DispatcherTest {
     public void cleanUp() {
         Path path = Path.of(".\\temped_tests\\");
         try {
-            for(File file : new File(path.toString()).listFiles()) {
+            File dir = new File(path.toString());
+            for(File file : dir.listFiles()) {
                 file.delete();
             }
-            Files.delete(path);
+            dir.delete();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
