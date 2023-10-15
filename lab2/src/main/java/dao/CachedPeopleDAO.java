@@ -1,5 +1,5 @@
-package DAO;
-import Persons.Person;
+package dao;
+import persons.Person;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CachedPeopleDAO implements DaoInterface<Person> {
-    private static Map<String, Person> personMap;                               //HashMap <id, person>
+    private Map<String, Person> personMap;                               //HashMap <id, person>
     private final String path;
 
     public CachedPeopleDAO(String path) {
@@ -63,5 +63,17 @@ public class CachedPeopleDAO implements DaoInterface<Person> {
             i++;
         }
         return res;
+    }
+
+    @Override
+    public Person[] getAll() {
+        int n = this.personMap.size(), i = 0;
+        if(n == 0) return null;
+        Person[] people = new Person[n];
+        for(Person person: this.personMap.values()) {
+            people[i] = person;
+            i++;
+        }
+        return people;
     }
 }

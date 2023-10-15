@@ -1,5 +1,5 @@
-package DAO;
-import Persons.Person;
+package dao;
+import persons.Person;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PersonDAO implements DaoInterface<Person> {
-    private static List<Person> personList;                                                                             //list of persons
+    private List<Person> personList;                                                                                    //list of persons
     private final String path;                                                                                          //local path
 
     public PersonDAO(String path) {
@@ -43,7 +43,7 @@ public class PersonDAO implements DaoInterface<Person> {
 
     @Override
     public void update(Person oldPerson, Person newPerson) {
-        personList.set(personList.indexOf(oldPerson), newPerson);                                                       //replace oldPerson by newPerson in list with old filename
+        personList.set(personList.indexOf(oldPerson), newPerson); //replace oldPerson by newPerson in list with old filename
         this.delete(oldPerson);
         newPerson.write(path);
     }
@@ -67,5 +67,17 @@ public class PersonDAO implements DaoInterface<Person> {
             i++;
         }
         return res;
+    }
+
+    @Override
+    public Person[] getAll() {
+        int n = this.personList.size(), i = 0;
+        if(n == 0) return null;
+        Person[] people = new Person[n];
+        for(Person person: personList) {
+            people[i] = person;
+            i++;
+        }
+        return people;
     }
 }

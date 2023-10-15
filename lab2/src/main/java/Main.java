@@ -1,4 +1,4 @@
-import Persons.*;
+import persons.*;
 import java.util.HashMap;
 
 public class Main {

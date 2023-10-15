@@ -1,10 +1,12 @@
-package Services;
-import DAO.CachedPeopleDAO;
-import Persons.Person;
-import Persons.Student;
-import Persons.Subjects;
-import Persons.Teacher;
-
+package services;
+import dao.CachedPeopleDAO;
+import persons.Person;
+import persons.Student;
+import persons.Subjects;
+import persons.Teacher;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 public class PeopleService {
@@ -21,7 +23,8 @@ public class PeopleService {
     private HashMap<Subjects, Double> parseMap(String stringMap) {
         HashMap<Subjects, Double> map = new HashMap<>();
         stringMap.replace("{", "").replace("}", "").
-                replace(",", "").replace("", "\"").replace(" ", "");
+                replace(",", "").replace("", "\"").replace(" ", "").
+                replace("\r\n", "");
         String[] splitString = stringMap.split(":");
         String[] splitLine;
         try {
@@ -61,21 +64,29 @@ public class PeopleService {
      * Optional: hours [hour1, hour2, ...] string <br>
      * or Hashmap of Subjects and Doubles JSON **/
     public Person updatePerson(String id, HashMap<String, String> changeMap) {
+        System.out.println("updating.....");
         Person person = this.peopleDAO.getById(id);
-        for(String value: changeMap.values()) {
+        for(String value: changeMap.keySet()) {
             value.toLowerCase();
+            System.out.println("VALUE = " + value);
             switch (value) {
-                case "name" -> person.setName(changeMap.get("name"));
-                case "surname" -> person.setSurName(changeMap.get("surname"));
-                case "secondname" -> person.setSecondName(changeMap.get("secondname"));
-                case "birthyear" -> person.setBirthYear(Integer.parseInt(changeMap.get("birthyear")));
+                case "name" -> person.setName(changeMap.get(value));
+                case "surname" -> person.setSurName(changeMap.get(value));
+                case "secondname" -> person.setSecondName(changeMap.get(value));
+                case "birthyear" -> person.setBirthYear(Integer.parseInt(changeMap.get(value)));
                 case "map" -> {
+                    if(person.toString().contains("hours")) {
+                        continue;
+                    }
                     Student student = (Student) person;
-                    student.setMap(parseMap(changeMap.get("map")));
+                    student.setMap(parseMap(changeMap.get(value)));
                 }
                 case "hours" -> {
+                    if(person.toString().contains("map")) {
+                        continue;
+                    }
                     Teacher teacher = (Teacher) person;
-                    teacher.setHours(parseHours(changeMap.get("hours")));
+                    teacher.setHours(parseHours(changeMap.get(value)));
                 }
                 default -> System.out.println("Unknown command");
             }
@@ -89,5 +100,9 @@ public class PeopleService {
 
     public String[] getIds() {
         return peopleDAO.getIds();
+    }
+
+    public Person[] getAll() {
+        return this.peopleDAO.getAll();
     }
 }

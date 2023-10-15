@@ -1,4 +1,4 @@
-package Persons;
+package persons;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,10 +11,10 @@ public class Student extends Person {
         this.map.putAll(map);
     }
 
-//    public Student() {
-//        super();
-//        this.map = new HashMap<>();
-//    }
+    public Student() {
+        super();
+        this.map = new HashMap<>();
+    }
 
     public Map<Subjects, Double> getMap() {
         Map<Subjects, Double> copyMap = new HashMap<>();

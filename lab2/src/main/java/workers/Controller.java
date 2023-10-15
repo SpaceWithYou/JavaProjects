@@ -1,4 +1,4 @@
-package Workers;
+package workers;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,17 +49,15 @@ public class Controller {
         String fileLines;
         for (File file : dir.listFiles()) {
             try {
+                System.out.println(file.getName());
                 if (file.isDirectory()) {
                     continue;
                 }
                 fileLines = Files.readAllLines(Path.of(file.getAbsolutePath())).toString();                             //Is control file
-                if (fileLines.contains("updatePerson") || fileLines.contains("deletePerson") || fileLines.contains("createPerson")) {
+                if (fileLines.contains("update") || fileLines.contains("delete") || fileLines.contains("create")) {
                     commandQueue.add(fileLines);
                     System.out.println(file.getName());
                 } else {
-                    if(fileLines.contains("name")) {
-                        continue;
-                    }
                     makeError(file);
                 }
                 file.delete();

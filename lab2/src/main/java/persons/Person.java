@@ -1,4 +1,4 @@
-package Persons;
+package persons;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ public abstract class Person {
         this.id = uuid.toString();
     }
 
-    private Person() {
+    Person() {
         name = "";
         surName = "";
         secondName = "";
@@ -37,7 +37,7 @@ public abstract class Person {
     @Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        //mapper.enable(SerializationFeature.INDENT_OUTPUT);
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {

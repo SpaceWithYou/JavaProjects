@@ -1,9 +1,8 @@
-package Workers;
-import Persons.Person;
-import Services.PeopleService;
+package workers;
+import persons.Person;
+import services.PeopleService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.*;
 
 public class Dispatcher {
@@ -38,8 +37,10 @@ public class Dispatcher {
                     if(line.contains("update(")) {
                         index = line.indexOf("update(");
                         int index2 = line.indexOf(",");
-                        String id = line.substring(index + 6, index2);
-                        String substring = line.substring(index2 + 1, line.length() - 1);
+                        String id = line.substring(index + 7, index2);
+                        String substring = line.substring(index2 + 1, line.length() - 2);
+                        System.out.println("ID = " + id);
+                        System.out.println("SubString = " + substring);
                         ObjectMapper mapper = new ObjectMapper();
                         TypeReference<HashMap<String, String>> typeRef
                                 = new TypeReference<HashMap<String, String>>() {};
@@ -48,12 +49,13 @@ public class Dispatcher {
                     }
                     else if(line.contains("create(")) {
                         index = line.indexOf("create(");
-                        String substring = line.substring(index + 6, line.length() - 1);
-                        Person person = Person.rawCreate(substring);
+                        String substring = line.substring(index + 7, line.length() - 2);
+                        System.out.println("Substring = " + substring);
+                        service.createPerson(Person.rawCreate(substring));
                     }
                     else if(line.contains("delete(")) {
                         index = line.indexOf("create(");
-                        String substring = line.substring(index + 6, line.length() - 1);
+                        String substring = line.substring(index + 7, line.length() - 2);
                         service.deletePerson(substring);
                     }
                     else {
@@ -87,6 +89,7 @@ public class Dispatcher {
     public PeopleService getService() {
         return this.service;
     }
+
     public Controller getController() {
         return this.controller;
     }

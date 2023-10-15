@@ -1,4 +1,4 @@
-package Persons;
+package persons;
 
 public class Teacher extends Person {
     private final Subjects subject;
@@ -10,11 +10,11 @@ public class Teacher extends Person {
         this.hours = hours;
     }
 
-//    public Teacher() {
-//        super();
-//        subject = Subjects.NODATA;
-//        hours = new int[]{};
-//    }
+    public Teacher() {
+        super();
+        subject = Subjects.NODATA;
+        hours = new int[]{};
+    }
 
     public Subjects getSubject() {
         return subject;
