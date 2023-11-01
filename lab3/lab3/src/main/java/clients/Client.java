@@ -1,5 +1,4 @@
 package clients;
-
 import java.util.UUID;
 
 public class Client {
@@ -33,4 +32,8 @@ public class Client {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        return "name : " + name + ", email : " + email + ", id : " + id;
+    }
 }
