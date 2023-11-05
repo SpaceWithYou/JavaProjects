@@ -9,6 +9,10 @@ public class ClientService implements ClientServiceInterface {
         cache = new DaoCache();
     }
 
+    public DaoCache getCache() {
+        return cache;
+    }
+
     @Override
     public void create(Client client) {
         cache.create(client);

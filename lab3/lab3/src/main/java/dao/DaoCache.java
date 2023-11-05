@@ -7,16 +7,26 @@ import java.util.concurrent.TimeUnit;
 
 public class DaoCache implements ClientServiceInterface {
     private Cache<String, Client> clientCache;
-
     public DaoCache() {
         clientCache = Caffeine.newBuilder().initialCapacity(1).maximumSize(10_000).expireAfterAccess(30, TimeUnit.MINUTES).build();
     }
-
+    public Cache<String, Client> getClientCache() {
+        return clientCache;
+    }
+    /**@return true if there is no client with the same email
+     * otherwise false**/
+    public boolean uniq(String email) {
+        for(Client client :clientCache.asMap().values()) {
+            if(client.getEmail().equals(email)) {
+                return false;
+            }
+        }
+        return true;
+    }
     @Override
     public void create(Client client) {
         clientCache.put(client.getId(), client);
     }
-
     @Override
     public boolean delete(String id) {
         try {
@@ -26,7 +36,6 @@ public class DaoCache implements ClientServiceInterface {
             return false;
         }
     }
-
     /**Client has name and email
      * @return false if data.size != 2 otherwise - true**/
     @Override
@@ -40,7 +49,6 @@ public class DaoCache implements ClientServiceInterface {
             return true;
         }
     }
-
     @Override
     public Client search(String id) {
         return clientCache.getIfPresent(id);
