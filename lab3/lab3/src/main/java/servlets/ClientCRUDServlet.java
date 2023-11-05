@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 public class ClientCRUDServlet extends HttpServlet {
     /**Create Client by name & email**/
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         PrintWriter writer = resp.getWriter();
@@ -28,6 +28,7 @@ public class ClientCRUDServlet extends HttpServlet {
             service.create(client);
             writer.println("<h2>Created new Client with id = " + client.getId() + "</h2>");
             writer.close();
+            return;
         }
         writer.println("<p>Already exists</p>");
         writer.close();
@@ -48,7 +49,7 @@ public class ClientCRUDServlet extends HttpServlet {
     }
     /**Update Client**/
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ClientService service = new ClientService();
         PrintWriter writer = resp.getWriter();
         resp.setContentType("text/html");
