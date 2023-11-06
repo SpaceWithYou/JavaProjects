@@ -18,7 +18,7 @@ public class ClientCRUDServlet extends HttpServlet {
         String email = req.getParameter("email");
         PrintWriter writer = resp.getWriter();
         ClientService service = new ClientService();
-        if(name == null || email == null) {
+        if(name.isEmpty() || email.isEmpty()) {
             writer.println("<p>Error</p>");
             writer.close();
             return;
@@ -26,7 +26,10 @@ public class ClientCRUDServlet extends HttpServlet {
         if(service.getCache().uniq(email)) {
             Client client = new Client(name, email);
             service.create(client);
-            writer.println("<h2>Created new Client with id = " + client.getId() + "</h2>");
+            writer.println("<p>Created new Client with id = " + client.getId() + "</p>");
+            for(Client c: service.getCache().getClientCache().asMap().values()) {
+                writer.println("<p>Clients " + c.getId() + "</p>");
+            }
             writer.close();
             return;
         }

@@ -5,8 +5,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import services.ClientServiceInterface;
 import java.util.concurrent.TimeUnit;
 
-public class DaoCache implements ClientServiceInterface {
-    private Cache<String, Client> clientCache;
+public class  DaoCache implements ClientServiceInterface {
+    private static Cache<String, Client> clientCache;
     public DaoCache() {
         clientCache = Caffeine.newBuilder().initialCapacity(1).maximumSize(10_000).expireAfterAccess(30, TimeUnit.MINUTES).build();
     }

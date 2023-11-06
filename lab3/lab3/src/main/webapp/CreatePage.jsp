@@ -1,25 +1,30 @@
 <%@ page contentType = "text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.io.*,java.lang.*,java.util.*,java.net.*,java.util.*,java.text.*"%>
-<%--<%@ page import="javax.activation.*,javax.mail.*,org.apache.commons.*"%>--%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
 <%@ page import="java.net.http.HttpRequest,java.net.URI,java.net.http.HttpClient,java.net.http.HttpResponse"%>
 <%!
-    //java.net.http.*,
-    public void callPost(String name, String email) {
+    /*
+    "java.io.*,java.lang.*,java.util.*,java.net.*,java.util.*,java.text.*"
+    "javax.servlet.http.*,javax.servlet.*"
+    */
+    public String callPost(String name, String email) {
+        String res = "";
         try {
             String s = "http://localhost:8080/lab3/page?name=" + name + "&email=" + email;
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(s)).POST(HttpRequest.BodyPublishers.ofString("Test")).build();
             HttpClient client = HttpClient.newBuilder().build();
-            client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            res = response.body();
         } catch(Exception e) {
+            res = "Error" + e.getMessage();
         }
+        return res;
     }
 %>
 <%
+    String resp = "";
     String name = request.getParameter("name");
     String email = request.getParameter("email");
     if(name != null && email != null) {
-        callPost(name, email);
+        resp = callPost(name, email);
     }
 %>
 <html>
@@ -32,5 +37,6 @@
     <br>
     <button type="submit" name="button" value="button1">Create</button>
 </form>
+<%= resp%>
 </body>
 </html>
