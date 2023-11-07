@@ -3,11 +3,9 @@ import clients.Client;
 import dao.DaoCache;
 
 public class ClientService implements ClientServiceInterface {
-    private static DaoCache cache;
+    private static DaoCache cache = new DaoCache();
 
-    public ClientService() {
-        cache = new DaoCache();
-    }
+    public ClientService() { }
 
     public DaoCache getCache() {
         return cache;

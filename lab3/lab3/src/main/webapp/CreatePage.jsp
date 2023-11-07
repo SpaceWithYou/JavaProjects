@@ -1,10 +1,6 @@
 <%@ page contentType = "text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.net.http.HttpRequest,java.net.URI,java.net.http.HttpClient,java.net.http.HttpResponse"%>
 <%!
-    /*
-    "java.io.*,java.lang.*,java.util.*,java.net.*,java.util.*,java.text.*"
-    "javax.servlet.http.*,javax.servlet.*"
-    */
     public String callPost(String name, String email) {
         String res = "";
         try {

@@ -27,9 +27,6 @@ public class ClientCRUDServlet extends HttpServlet {
             Client client = new Client(name, email);
             service.create(client);
             writer.println("<p>Created new Client with id = " + client.getId() + "</p>");
-            for(Client c: service.getCache().getClientCache().asMap().values()) {
-                writer.println("<p>Clients " + c.getId() + "</p>");
-            }
             writer.close();
             return;
         }
