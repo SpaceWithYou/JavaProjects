@@ -45,6 +45,9 @@ public class  DaoCache implements ClientServiceInterface {
             return false;
         } else {
             Client client = clientCache.asMap().get(id);
+            if(client == null) {
+                return false;
+            }
             client.setName(data[0]);
             client.setEmail(data[1]);
             return true;

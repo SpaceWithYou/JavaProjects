@@ -1,11 +1,12 @@
 <%@ page contentType = "text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.net.http.HttpRequest,java.net.URI,java.net.http.HttpClient,java.net.http.HttpResponse"%>
 <%!
-    public String callGet(String name, String id) {
+    public String callPost(String name, String id) {
         String res = "";
         try {
-            String s = "http://localhost:8080/lab3/page?name=" + name + "&id=" + id;
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(s)).GET().build();
+            String s = "http://localhost:8080/lab3/AuthPage.jsp";
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(s)).POST().header("TomcatSession", name:" + name + "/id:"+ id).build();;
+            request.getSession().setAttribute("TomcatSession", "name:" + name + "/id:"+ id);
             HttpClient client = HttpClient.newBuilder().build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             res = response.body();
@@ -20,7 +21,7 @@
     String name = request.getParameter("name");
     String id = request.getParameter("id");
     if(id != null && name != null) {
-        resp = callGet(name, id);
+        resp = callPost(name, id);
     }
 %>
 <html>

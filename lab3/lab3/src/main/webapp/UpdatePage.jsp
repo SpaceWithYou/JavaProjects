@@ -4,8 +4,8 @@
     public String callPut(String id, String name, String email) {
         String res = "";
         try {
-        String s = "http://localhost:8080/lab3/page?id=" + id + "&params=" + name + "&params=" + email;
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(s)).PUT(HttpRequest.BodyPublishers.noBody()).build();
+            String s = "http://localhost:8080/lab3/page?id=" + id + "&params=" + name + "&params=" + email;
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(s)).PUT(HttpRequest.BodyPublishers.noBody()).build();
             HttpClient client = HttpClient.newBuilder().build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             res = response.body();

@@ -1,8 +1,6 @@
 package servletsFilters;
 import clients.Client;
 import services.ClientService;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -14,13 +12,19 @@ import java.io.PrintWriter;
 
 @WebServlet(urlPatterns = "/page", loadOnStartup = 1)
 public class ClientCRUDServlet extends HttpServlet {
+    private ClientService service;
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        service = new ClientService();
+    }
+
     /**Create Client by name & email**/
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         PrintWriter writer = resp.getWriter();
-        ClientService service = new ClientService();
         if(name.isEmpty() || email.isEmpty()) {
             writer.println("<p>Error</p>");
             writer.close();
@@ -38,27 +42,25 @@ public class ClientCRUDServlet extends HttpServlet {
     }
     /**Get Client by id**/
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ClientService service = new ClientService();
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String id = req.getParameter("id");
-        String name = req.getParameter("name");
-        if(service.getCache().search(id) != null) {
-            if(service.search(id).getName().equals(name)) {
-                Cookie cookie = new Cookie("TomcatSession", "name:" + name + "/id:"+ id);
-                resp.addCookie(cookie);
-                String page = "/ClientPage.jsp";
-                ServletContext context = req.getServletContext();
-                RequestDispatcher dispatcher = context.getRequestDispatcher(page);
-                dispatcher.forward(req, resp);
-                return;
-            }
+        PrintWriter writer = resp.getWriter();
+        if(id == null ) {
+            writer.println("<p>Error</p>");
+            return;
         }
-        resp.getWriter().println("<h2>Invalid name or id</h2>");
+        Client search = service.search(id);
+        if(search == null) {
+            writer.println("<p>Error</p>");
+            return;
+        }
+        writer.println("<h2>Name: " +  search.getName() + "</h2>");
+        writer.println("<h2>Email: " + search.getEmail() + "</h2>");
+        writer.println("<h2>Id: " + search.getId() + "</h2>");
     }
     /**Update Client**/
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ClientService service = new ClientService();
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter writer = resp.getWriter();
         resp.setContentType("text/html");
         String id = req.getParameter("id");
@@ -72,8 +74,7 @@ public class ClientCRUDServlet extends HttpServlet {
     }
     /**Delete Client**/
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ClientService service = new ClientService();
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter writer = resp.getWriter();
         resp.setContentType("text/html");
         String id = req.getParameter("id");
