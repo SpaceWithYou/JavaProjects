@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 public class DispatcherTest {
-
     @Before
     public void onStart(){
         Path path = Path.of(".\\temped_tests");
@@ -87,7 +86,7 @@ public class DispatcherTest {
             toWrite = "delete(" + dispatcher.getService().getIds()[0] + ");\n" + "delete(" +
                     dispatcher.getService().getIds()[1] + ");\n";
             Files.write(new File("file5.txt").toPath(), toWrite.getBytes());
-            new File("file5.txt").renameTo(new File(".\\temped_tests\\file5.txt"));
+            //new File("file5.txt").renameTo(new File(".\\temped_tests\\file5.txt"));
             Thread.sleep(5000);
             assert dispatcher.getService().getIds().length == 0;
         } catch (Exception e) {

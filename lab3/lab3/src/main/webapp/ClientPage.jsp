@@ -1,8 +1,10 @@
 <%@ page contentType = "text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.net.http.HttpRequest,java.net.URI,java.net.http.HttpClient,java.net.http.HttpResponse"%>
+<%!%>
+<%%>
 <html>
+<head></head>
 <body>
-<h1>Name = </h1>
-<h1>Email = </h1>
-<h1>ID = </h1>
+<h2>Success</h2>
 </body>
 </html>

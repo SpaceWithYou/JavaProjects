@@ -1,11 +1,11 @@
 <%@ page contentType = "text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.net.http.HttpRequest,java.net.URI,java.net.http.HttpClient,java.net.http.HttpResponse"%>
 <%!
-    public String callPut(String id, String name, String email) {
+    public String callGet(String name, String id) {
         String res = "";
         try {
-        String s = "http://localhost:8080/lab3/page?id=" + id + "&params=" + name + "&params=" + email;
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(s)).PUT(HttpRequest.BodyPublishers.noBody()).build();
+            String s = "http://localhost:8080/lab3/page?name=" + name + "&id=" + id;
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(s)).GET().build();
             HttpClient client = HttpClient.newBuilder().build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             res = response.body();
@@ -17,25 +17,22 @@
 %>
 <%
     String resp = "";
-    String id = request.getParameter("id");
     String name = request.getParameter("name");
-    String email = request.getParameter("email");
-    if(id != null && name != null && email != null) {
-        resp = callPut(id, name, email);
+    String id = request.getParameter("id");
+    if(id != null && name != null) {
+        resp = callGet(name, id);
     }
 %>
 <html>
 <head></head>
 <body>
-<h1>Update page</h1>
+<h1>Auth page</h1>
 <form action="#">
-    ID:<input type="text" name="id">
+    Name:<input type="text" name="name">
     <br>
-    New name:<input type="text" name="name">
+    Password(id):<input type="text" name="id">
     <br>
-    New email:<input type="text" name="email">
-    <br>
-    <button type="submit" name="button" value="button1">Update</button>
+    <button type="submit" name="button" value="button1">Auth</button>
 </form>
 <%= resp%>
 </body>

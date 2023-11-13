@@ -1,8 +1,11 @@
-package servlets;
+package servletsFilters;
 import clients.Client;
 import services.ClientService;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,15 +40,20 @@ public class ClientCRUDServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ClientService service = new ClientService();
-        resp.setContentType("text/html");
-        PrintWriter writer = resp.getWriter();
         String id = req.getParameter("id");
-        if(id == null) {
-            writer.println("<p>Unknown id</p>");
-            writer.close();
-            return;
+        String name = req.getParameter("name");
+        if(service.getCache().search(id) != null) {
+            if(service.search(id).getName().equals(name)) {
+                Cookie cookie = new Cookie("TomcatSession", "name:" + name + "/id:"+ id);
+                resp.addCookie(cookie);
+                String page = "/ClientPage.jsp";
+                ServletContext context = req.getServletContext();
+                RequestDispatcher dispatcher = context.getRequestDispatcher(page);
+                dispatcher.forward(req, resp);
+                return;
+            }
         }
-        writer.write("<h2>" + service.getCache().search(id).toString() + "</h2>");
+        resp.getWriter().println("<h2>Invalid name or id</h2>");
     }
     /**Update Client**/
     @Override
@@ -55,7 +63,7 @@ public class ClientCRUDServlet extends HttpServlet {
         resp.setContentType("text/html");
         String id = req.getParameter("id");
         String[] params = req.getParameterValues("params");
-        if(id == null || params.length > 2 || params[0] == null || params[1] == null) {
+        if(id.isEmpty() || params.length > 2 || params[0].isEmpty() || params[1].isEmpty()) {
             writer.println("<p>Error</p>");
             writer.close();
             return;
