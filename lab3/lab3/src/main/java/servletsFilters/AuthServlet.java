@@ -1,42 +1,44 @@
 package servletsFilters;
 import clients.Client;
 import services.ClientService;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-@WebServlet(urlPatterns = "/AuthPage.jsp", loadOnStartup = 1)
+@WebServlet(urlPatterns = "/AuthPage.jsp/Auth", loadOnStartup = 1)
 public class AuthServlet extends HttpServlet {
+private ClientService service = new ClientService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ClientService service = new ClientService();
-        String id = req.getParameter("id");
-        String name = req.getParameter("name");
-        if(id != null || name != null ) {
+        System.out.println("AuthServlet");
+        String session = req.getHeader("TomcatSession");
+        String[] params = session.split("/");
+        String id = params[1].replace("id:", "");
+        String name = params[0].replace("name:", "");
+        PrintWriter writer = resp.getWriter();
+        if(!id.isEmpty() || !name.isEmpty()) {
             Client search = service.search(id);
             if(search != null) {
                 if(search.getName().equals(name)) {
-                    for(Cookie cookie: req.getCookies()) {
-                        if(cookie.getName().equals("TomcatSession")) {
-                            cookie.setValue("name:" + name + "/id:"+ id);
-                        }
-                    }
-//                    Cookie cookie = new Cookie("TomcatSession", "name:" + name + "/id:"+ id);
-//                    cookie.setMaxAge(18000);
-//                    cookie.setPath("/lab3");
-//                    cookie.setHttpOnly(true);
-//                    resp.addCookie(cookie);
-                    resp.setContentType("text/html");
-                    resp.getWriter().println("<h2>Success</h2>");
+                    Cookie cookie = new Cookie("TomcatSession", "name:" + name + "/id:"+ id);
+                    cookie.setMaxAge(18000);
+                    cookie.setPath("/lab3");
+                    cookie.setSecure(true);
+                    resp.addCookie(cookie);
+                    System.out.println("AuthServlet added cookie");
+                    writer.println("<h2>Success</h2>");
+                    writer.close();
                     return;
                 }
             }
         }
-        resp.getWriter().println("<h2>Invalid name or id</h2>");
+        writer.println("<h2>Invalid name or id</h2>");
+        writer.close();
     }
+
 }
