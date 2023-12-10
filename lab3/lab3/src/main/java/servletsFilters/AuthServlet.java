@@ -25,15 +25,15 @@ private ClientService service = new ClientService();
             Client search = service.search(id);
             if(search != null) {
                 if(search.getName().equals(name)) {
-                    Cookie cookie = new Cookie("TomcatSession", "name:" + name + "/id:"+ id);
-                    cookie.setMaxAge(18000);
-                    cookie.setPath("/lab3");
-                    cookie.setSecure(true);
-                    resp.addCookie(cookie);
-                    System.out.println("AuthServlet added cookie");
-                    writer.println("<h2>Success</h2>");
-                    writer.close();
-                    return;
+                  Cookie cookie = new Cookie("TomcatSession", "name:" + name + "/id:"+ id);
+                  cookie.setMaxAge(18000);
+                  cookie.setPath("/lab3");
+                  cookie.setSecure(true);
+                  resp.addCookie(cookie);
+                  System.out.println("AuthServlet added cookie");
+                  writer.println("<h2>Success</h2>");
+                  writer.close();
+                  return;
                 }
             }
         }
